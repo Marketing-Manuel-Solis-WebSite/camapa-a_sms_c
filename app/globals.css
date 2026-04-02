@@ -1,26 +1,149 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --color-navy: #0D1B3E;
+  --color-navy-light: #1A3A6B;
+  --color-navy-dark: #080F20;
+  --color-gold: #C5A55A;
+  --color-gold-light: #E5D5A0;
+  --color-cream: #FBF7EC;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: #171717;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── Keyframes ── */
+
+@keyframes flash {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(197, 165, 90, 0.4), 0 4px 20px rgba(0, 0, 0, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(197, 165, 90, 0.7), 0 0 80px rgba(197, 165, 90, 0.3), 0 4px 20px rgba(0, 0, 0, 0.2);
+    transform: scale(1.03);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes progress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(50px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Utility Classes ── */
+
+.animate-flash {
+  animation: flash 0.8s ease-in-out forwards;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 1.2s ease-out forwards;
+}
+
+.animate-pulseGlow {
+  animation: pulseGlow 2.5s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.8s ease-out both;
+}
+
+/* ── Gold Gradient Text ── */
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #9A7B2E 0%, #C5A55A 35%, #9A7B2E 65%, #C5A55A 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+/* ── Play Button ── */
+
+.play-btn {
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(135deg, #C5A55A, #E5D5A0);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 30px rgba(197, 165, 90, 0.5), 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.play-btn:hover {
+  box-shadow: 0 0 50px rgba(197, 165, 90, 0.8), 0 8px 40px rgba(0, 0, 0, 0.4);
+}
+
+@media (min-width: 768px) {
+  .play-btn {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+/* ── Scrollbar ── */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0D1B3E;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C5A55A;
+  border-radius: 3px;
+}
+
+/* ── Selection ── */
+
+::selection {
+  background: rgba(197, 165, 90, 0.3);
+  color: #0D1B3E;
 }
