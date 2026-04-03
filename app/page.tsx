@@ -6,12 +6,13 @@ import Image from "next/image";
 const YOUTUBE_ID = "3Z6BOOCBgas";
 const PHONE = "+18329248272";
 const PHONE_DISPLAY = "+1 (832) 924-8272";
-const INTRO_MS = 10000;
+const INTRO_MS = 15000;
 
 export default function Home() {
   const [phase, setPhase] = useState<"intro" | "flash" | "main">("intro");
   const [videoActive, setVideoActive] = useState(false);
   const transitioned = useRef(false);
+  const introVideoRef = useRef<HTMLVideoElement>(null);
 
   const goToMain = useCallback(() => {
     if (transitioned.current) return;
@@ -20,23 +21,36 @@ export default function Home() {
     setTimeout(() => setPhase("main"), 800);
   }, []);
 
+  const handleIntroTimeUpdate = useCallback(() => {
+    if (introVideoRef.current && introVideoRef.current.currentTime >= 15) {
+      goToMain();
+    }
+  }, [goToMain]);
+
   useEffect(() => {
     if (phase !== "intro") return;
     const t = setTimeout(goToMain, INTRO_MS);
     return () => clearTimeout(t);
   }, [phase, goToMain]);
 
+  // Auto-play the main YouTube video when entering main phase
+  useEffect(() => {
+    if (phase === "main") setVideoActive(true);
+  }, [phase]);
+
   return (
     <>
       {/* ═══════════ INTRO: 10-second YouTube teaser ═══════════ */}
       {phase === "intro" && (
         <div className="fixed inset-0 z-50 bg-black overflow-hidden">
-          <iframe
-            className="absolute inset-0 w-full h-full pointer-events-none scale-125"
-            src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1`}
-            allow="autoplay; encrypted-media"
-            allowFullScreen
-            title="Uniendo Familias - Adelanto"
+          <video
+            ref={introVideoRef}
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            src="/VideoInicio.mp4"
+            autoPlay
+            muted
+            playsInline
+            onTimeUpdate={handleIntroTimeUpdate}
           />
 
           {/* Cinematic vignette */}
@@ -61,7 +75,7 @@ export default function Home() {
             <div
               className="h-full rounded-r-full"
               style={{
-                animation: "progress 10s linear forwards",
+                animation: "progress 15s linear forwards",
                 background: "linear-gradient(90deg, #C5A55A, #E5D5A0)",
               }}
             />
@@ -149,10 +163,10 @@ export default function Home() {
             {/* Title */}
             <div className="text-center shrink-0">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-gradient-gold leading-none">
-                UNIENDO FAMILIAS
+                CASO REAL DE ÉXITO
               </h1>
-              <p className="text-xs sm:text-sm md:text-base text-navy/50 tracking-[0.25em] uppercase mt-1 sm:mt-1.5">
-                Con Manuel Solis
+              <p className="text-[11px] sm:text-sm md:text-base text-navy/60 max-w-md md:max-w-lg mt-1 sm:mt-1.5 leading-snug text-center">
+                Conoce este caso real de reunificación familiar, respaldado por los 35 años de experiencia de la Firma del Abogado Manuel Solís.
               </p>
             </div>
 
@@ -216,10 +230,10 @@ export default function Home() {
           <div className="relative z-10 shrink-0 flex flex-col items-center gap-1.5 sm:gap-2">
             <a
               href={`sms:${PHONE}`}
-              className="inline-flex items-center gap-2.5 sm:gap-3 px-7 sm:px-9 md:px-10 py-3.5 sm:py-4 md:py-5 rounded-full text-base sm:text-lg md:text-xl font-bold text-navy transition-all duration-300 hover:scale-105 animate-pulseGlow no-underline"
+              className="inline-flex items-center gap-2.5 sm:gap-3 px-7 sm:px-9 md:px-10 py-3.5 sm:py-4 md:py-5 rounded-full text-base sm:text-lg md:text-xl font-medium text-white transition-all duration-300 hover:scale-105 animate-pulseGlow-green no-underline"
               style={{
                 background:
-                  "linear-gradient(135deg, #C5A55A 0%, #E5D5A0 50%, #C5A55A 100%)",
+                  "linear-gradient(135deg, #16A34A 0%, #22C55E 50%, #16A34A 100%)",
               }}
             >
               <svg
@@ -236,13 +250,10 @@ export default function Home() {
                 />
               </svg>
               <span className="text-center leading-tight">
-                ¡Responde el mensaje!<br />
-                Y cambia tu vida
+                Retoma tu proceso y<br />
+                <span className="font-bold">agenda tu consulta</span>
               </span>
             </a>
-            <p className="text-navy/35 text-[10px] sm:text-xs tracking-[0.2em] uppercase">
-              Consulta disponible en Español
-            </p>
           </div>
         </main>
       </div>

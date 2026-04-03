@@ -82,6 +82,21 @@ body {
   animation: pulseGlow 2.5s ease-in-out infinite;
 }
 
+@keyframes pulseGlowGreen {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(22, 163, 74, 0.4), 0 4px 20px rgba(0, 0, 0, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(22, 163, 74, 0.7), 0 0 80px rgba(22, 163, 74, 0.3), 0 4px 20px rgba(0, 0, 0, 0.2);
+    transform: scale(1.03);
+  }
+}
+
+.animate-pulseGlow-green {
+  animation: pulseGlowGreen 2.5s ease-in-out infinite;
+}
+
 .animate-float {
   animation: float 4s ease-in-out infinite;
 }
