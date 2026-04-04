@@ -185,10 +185,10 @@ export default function Home() {
           <div className="relative z-10 flex-1 flex flex-col items-center justify-center min-h-0 w-full gap-1.5 sm:gap-2 md:gap-3 py-1">
             {/* Title */}
             <div className="text-center shrink-0">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-gradient-gold leading-none">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-gradient-gold leading-none">
                 CASO REAL DE ÉXITO
               </h1>
-              <p className="text-[10px] sm:text-xs md:text-sm text-navy/60 max-w-xs sm:max-w-sm md:max-w-md mt-0.5 sm:mt-1 leading-snug text-center mx-auto">
+              <p className="text-sm sm:text-base md:text-lg text-navy/60 max-w-sm sm:max-w-md md:max-w-lg mt-0.5 sm:mt-1 leading-snug text-center mx-auto">
                 Conoce este caso real de reunificación familiar, respaldado por
                 los 35 años de experiencia de la Firma del Abogado Manuel Solís.
               </p>
@@ -243,11 +243,8 @@ export default function Home() {
                 )}
               </div>
             </div>
-          </div>
-
-          {/* ── CTA ── */}
-          <div className="relative z-10 shrink-0 flex flex-col items-center">
-            <p className="text-base sm:text-lg md:text-xl font-semibold text-navy/80 text-center leading-snug">
+            {/* ── CTA ── */}
+            <p className="text-base sm:text-lg md:text-xl font-semibold text-navy/80 text-center leading-snug shrink-0">
               Responde a este mensaje con un{" "}
               <span className="text-green-600 font-bold">&ldquo;Me interesa&rdquo;</span>
             </p>
