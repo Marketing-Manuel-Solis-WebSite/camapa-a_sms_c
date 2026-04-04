@@ -219,12 +219,12 @@ export default function Home() {
                 title="Uniendo Familias - Ep. 2 Eva López"
               />
             </div>
+          </div>
 
-            {/* CTA — responder SMS */}
-            <div className="shrink-0 text-center max-w-xs sm:max-w-sm mx-auto">
-              <p className="text-sm sm:text-base text-navy font-medium leading-snug">
-                Responde <span className="font-black text-gold">&quot;ME INTERESA&quot;</span> a este mismo SMS y te contactaremos hoy para retomar tu consulta.
-              </p>
+          {/* CTA — responder SMS */}
+          <div className="relative z-10 shrink-0 text-center max-w-[320px] sm:max-w-sm mx-auto pb-1 -mt-4 sm:-mt-6 flex flex-col items-center gap-1.5">
+            <div className="inline-flex flex-col items-center px-6 py-3 sm:py-3.5 bg-gradient-to-b from-green-500 to-green-700 text-white font-bold text-sm sm:text-base rounded-2xl shadow-[0_4px_24px_rgba(34,197,94,0.5)] tracking-wide leading-snug text-center">
+              Responde &quot;ME INTERESA&quot; a este mismo SMS y te contactaremos hoy para retomar tu consulta.
             </div>
           </div>
         </main>
