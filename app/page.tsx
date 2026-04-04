@@ -7,9 +7,26 @@ const YOUTUBE_ID = "3Z6BOOCBgas";
 const PHONE = "+18329248272";
 const INTRO_MS = 15000;
 
+/* ── Volume icon SVGs ── */
+function VolumeOnIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M11 5L6 9H2v6h4l5 4V5z" />
+    </svg>
+  );
+}
+function VolumeOffIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H2v-6h3.586L11 4v16l-5.414-5zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+    </svg>
+  );
+}
+
 export default function Home() {
   const [phase, setPhase] = useState<"intro" | "flash" | "main">("intro");
   const [videoActive, setVideoActive] = useState(false);
+  const [introMuted, setIntroMuted] = useState(false);
   const transitioned = useRef(false);
   const introVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -37,10 +54,18 @@ export default function Home() {
       p.catch(() => {
         // Browser blocked sound — play muted as fallback
         video.muted = true;
+        setIntroMuted(true);
         video.play().catch(() => {});
       });
     }
   }, [phase]);
+
+  const toggleIntroMute = useCallback(() => {
+    if (!introVideoRef.current) return;
+    const next = !introMuted;
+    introVideoRef.current.muted = next;
+    setIntroMuted(next);
+  }, [introMuted]);
 
   useEffect(() => {
     if (phase !== "intro") return;
@@ -64,6 +89,19 @@ export default function Home() {
             playsInline
             onTimeUpdate={handleIntroTimeUpdate}
           />
+
+          {/* Mute / Unmute toggle */}
+          <button
+            onClick={toggleIntroMute}
+            className="absolute top-6 left-6 z-20 w-10 h-10 flex items-center justify-center bg-black/40 backdrop-blur-md rounded-full text-white hover:bg-black/60 transition-all border border-white/20"
+            aria-label={introMuted ? "Activar sonido" : "Silenciar"}
+          >
+            {introMuted ? (
+              <VolumeOffIcon className="w-5 h-5" />
+            ) : (
+              <VolumeOnIcon className="w-5 h-5" />
+            )}
+          </button>
 
           {/* Cinematic vignette */}
           <div
@@ -132,14 +170,14 @@ export default function Home() {
           </div>
 
           {/* ── Logo ── */}
-          <div className="relative z-10 shrink-0">
+          <div className="relative z-10 shrink-0 mt-3 sm:mt-4 md:mt-5">
             <Image
               src="/LogoManuelSolis.png"
               alt="Law Offices of Manuel Solis"
               width={320}
               height={80}
               priority
-              className="h-10 sm:h-14 md:h-18 w-auto mix-blend-multiply"
+              className="h-16 sm:h-20 md:h-24 w-auto mix-blend-multiply"
             />
           </div>
 
@@ -209,27 +247,10 @@ export default function Home() {
 
           {/* ── CTA ── */}
           <div className="relative z-10 shrink-0 flex flex-col items-center">
-            <a
-              href={`sms:${PHONE}`}
-              className="inline-flex items-center gap-2 sm:gap-2.5 px-5 sm:px-7 md:px-9 py-2.5 sm:py-3.5 md:py-4 rounded-full text-sm sm:text-base md:text-lg font-medium text-white transition-all duration-300 hover:scale-105 animate-pulseGlow-green no-underline"
-              style={{
-                background:
-                  "linear-gradient(135deg, #16A34A 0%, #22C55E 50%, #16A34A 100%)",
-              }}
-            >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2.5}
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                />
-              </svg>
-              <span className="text-center leading-tight">
-                Retoma tu proceso y<br />
-                <span className="font-bold">agenda tu consulta</span>
-              </span>
-            </a>
+            <p className="text-base sm:text-lg md:text-xl font-semibold text-navy/80 text-center leading-snug">
+              Responde a este mensaje con un{" "}
+              <span className="text-green-600 font-bold">&ldquo;Me interesa&rdquo;</span>
+            </p>
           </div>
         </main>
       </div>
