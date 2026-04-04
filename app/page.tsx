@@ -223,7 +223,7 @@ export default function Home() {
           </div>
 
           {/* CTA — llamada telefónica */}
-          <div className="relative z-10 shrink-0 text-center max-w-[300px] sm:max-w-sm mx-auto pb-1 -mt-4 sm:-mt-6 flex flex-col items-center gap-1.5">
+          <div className="relative z-10 shrink-0 text-center max-w-[300px] sm:max-w-sm mx-auto pb-1 -mt-8 sm:-mt-10 flex flex-col items-center gap-1.5">
             <a
               href={`tel:${PHONE}`}
               className="inline-flex flex-col items-center px-8 py-3 sm:py-3.5 bg-gradient-to-b from-green-500 to-green-700 text-white font-bold text-base sm:text-lg rounded-full shadow-[0_4px_24px_rgba(34,197,94,0.5)] hover:shadow-[0_4px_32px_rgba(34,197,94,0.7)] active:scale-95 transition-all tracking-wide"
