@@ -141,7 +141,7 @@ export default function Home() {
       {/* ═══════════ MAIN – everything in one screen, zero scroll ═══════════ */}
       <div className={phase === "main" ? "animate-fadeIn" : "hidden"}>
         <main
-          className="h-screen overflow-hidden flex flex-col items-center px-3 sm:px-5 pt-2 pb-5 sm:pt-3 sm:pb-6 md:pt-5 md:pb-8 relative"
+          className="h-screen overflow-hidden flex flex-col items-center px-3 sm:px-5 pt-2 pb-2 sm:pt-3 sm:pb-3 md:pt-5 md:pb-4 relative"
           style={{ height: "100dvh" }}
         >
           {/* ── Background ── */}
@@ -182,13 +182,13 @@ export default function Home() {
           </div>
 
           {/* ── Center: Title + Video ── */}
-          <div className="relative z-10 flex-1 flex flex-col items-center justify-center min-h-0 w-full gap-1.5 sm:gap-2 md:gap-3 py-1">
+          <div className="relative z-10 flex-1 flex flex-col items-center justify-center min-h-0 w-full gap-0.5 sm:gap-1 md:gap-1.5 py-1">
             {/* Title */}
             <div className="text-center shrink-0">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-gradient-gold leading-none">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-gradient-gold leading-none">
                 CASO REAL DE ÉXITO
               </h1>
-              <p className="text-sm sm:text-base md:text-lg text-navy/60 max-w-sm sm:max-w-md md:max-w-lg mt-0.5 sm:mt-1 leading-snug text-center mx-auto">
+              <p className="text-lg sm:text-xl md:text-2xl text-navy/60 max-w-md sm:max-w-lg md:max-w-xl mt-0.5 sm:mt-1 leading-snug text-center mx-auto">
                 Conoce este caso real de reunificación familiar, respaldado por
                 los 35 años de experiencia de la Firma del Abogado Manuel Solís.
               </p>
