@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 
 const YOUTUBE_ID = "3Z6BOOCBgas";
-const PHONE = "+17133227646";
 
 export default function Home() {
   const [phase, setPhase] = useState<"intro" | "flash" | "main">("intro");
@@ -220,20 +219,13 @@ export default function Home() {
                 title="Uniendo Familias - Ep. 2 Eva López"
               />
             </div>
-          </div>
 
-          {/* CTA — llamada telefónica */}
-          <div className="relative z-10 shrink-0 text-center max-w-[300px] sm:max-w-sm mx-auto pb-1 -mt-8 sm:-mt-10 flex flex-col items-center gap-1.5">
-            <a
-              href={`tel:${PHONE}`}
-              className="inline-flex flex-col items-center px-8 py-3 sm:py-3.5 bg-gradient-to-b from-green-500 to-green-700 text-white font-bold text-base sm:text-lg rounded-full shadow-[0_4px_24px_rgba(34,197,94,0.5)] hover:shadow-[0_4px_32px_rgba(34,197,94,0.7)] active:scale-95 transition-all tracking-wide"
-            >
-              <span>LLAMA AHORA</span>
-              <span className="text-xs sm:text-sm font-semibold tracking-wider opacity-90">(713) 322-7646</span>
-            </a>
-            <p className="text-[10px] sm:text-xs text-navy/60 leading-snug">
-              Te atendemos hoy mismo.
-            </p>
+            {/* CTA — responder SMS */}
+            <div className="shrink-0 text-center max-w-xs sm:max-w-sm mx-auto">
+              <p className="text-sm sm:text-base text-navy font-medium leading-snug">
+                Responde <span className="font-black text-gold">&quot;ME INTERESA&quot;</span> a este mismo SMS y te contactaremos hoy para retomar tu consulta.
+              </p>
+            </div>
           </div>
         </main>
       </div>
