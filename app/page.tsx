@@ -4,152 +4,164 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 
 const YOUTUBE_ID = "3Z6BOOCBgas";
-const PHONE = "+18329248272";
-const INTRO_MS = 15000;
-
-/* ── Volume icon SVGs ── */
-function VolumeOnIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M11 5L6 9H2v6h4l5 4V5z" />
-    </svg>
-  );
-}
-function VolumeOffIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H2v-6h3.586L11 4v16l-5.414-5zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
-    </svg>
-  );
-}
+const PHONE = "+17133227646";
 
 export default function Home() {
   const [phase, setPhase] = useState<"intro" | "flash" | "main">("intro");
-  const [videoActive, setVideoActive] = useState(false);
-  const [introMuted, setIntroMuted] = useState(false);
-  const transitioned = useRef(false);
   const introVideoRef = useRef<HTMLVideoElement>(null);
+  const transitioned = useRef(false);
+  const [videoReady, setVideoReady] = useState(false);
 
   const goToMain = useCallback(() => {
     if (transitioned.current) return;
     transitioned.current = true;
+    const video = introVideoRef.current;
+    if (video) video.pause();
     setPhase("flash");
     setTimeout(() => setPhase("main"), 800);
   }, []);
 
-  const handleIntroTimeUpdate = useCallback(() => {
-    if (introVideoRef.current && introVideoRef.current.currentTime >= 15) {
-      goToMain();
-    }
-  }, [goToMain]);
+  const [isMuted, setIsMuted] = useState(true);
 
-  /* Autoplay with sound. If the browser blocks it, fall back to muted. */
+  const toggleMute = useCallback(() => {
+    const v = introVideoRef.current;
+    if (!v) return;
+    if (v.muted) {
+      v.muted = false;
+      v.volume = 1;
+      setIsMuted(false);
+    } else {
+      v.muted = true;
+      setIsMuted(true);
+    }
+  }, []);
+
   useEffect(() => {
-    if (phase !== "intro" || !introVideoRef.current) return;
     const video = introVideoRef.current;
-    video.muted = false;
-    video.volume = 1;
-    const p = video.play();
-    if (p) {
-      p.catch(() => {
-        // Browser blocked sound — play muted as fallback
-        video.muted = true;
-        setIntroMuted(true);
-        video.play().catch(() => {});
-      });
-    }
-  }, [phase]);
+    if (!video) return;
 
-  const toggleIntroMute = useCallback(() => {
-    if (!introVideoRef.current) return;
-    const next = !introMuted;
-    introVideoRef.current.muted = next;
-    setIntroMuted(next);
-  }, [introMuted]);
+    const onEnded = () => goToMain();
+    const onCanPlay = () => setVideoReady(true);
+    video.addEventListener("ended", onEnded);
+    video.addEventListener("canplay", onCanPlay);
 
-  useEffect(() => {
-    if (phase !== "intro") return;
-    const t = setTimeout(goToMain, INTRO_MS);
-    return () => clearTimeout(t);
-  }, [phase, goToMain]);
+    // Skip intro after 8s if video still hasn't loaded
+    const timeout = setTimeout(() => {
+      if (!videoReady) goToMain();
+    }, 8000);
 
-  useEffect(() => {
-    if (phase === "main") setVideoActive(true);
-  }, [phase]);
+    // Start muted — autoplay guaranteed. User must tap to unmute.
+    video.muted = true;
+    setIsMuted(true);
+    video.play().catch(() => {});
+
+    return () => {
+      video.removeEventListener("ended", onEnded);
+      video.removeEventListener("canplay", onCanPlay);
+      clearTimeout(timeout);
+    };
+  }, [goToMain, videoReady]);
+
+  const isIntro = phase === "intro";
 
   return (
     <>
-      {/* ═══════════ INTRO ═══════════ */}
-      {phase === "intro" && (
-        <div className="fixed inset-0 z-50 bg-black overflow-hidden">
-          <video
-            ref={introVideoRef}
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-            src="/VideoInicio.mp4"
-            playsInline
-            onTimeUpdate={handleIntroTimeUpdate}
-          />
+      {/* ═══════════ INTRO VIDEO (always in DOM for preload) ═══════════ */}
+      <div
+        className="fixed inset-0 z-50 bg-black overflow-hidden"
+        style={{ display: isIntro ? "block" : "none" }}
+      >
+        <video
+          ref={introVideoRef}
+          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
+          src="/VideoInicio.mp4"
+          muted
+          autoPlay
+          playsInline
+          preload="auto"
+          style={{ pointerEvents: "none", opacity: videoReady ? 1 : 0 }}
+        />
 
-          {/* Mute / Unmute toggle */}
+        {/* Loading indicator — shown while video buffers */}
+        {!videoReady && (
+          <div className="absolute inset-0 z-[1] flex flex-col items-center justify-center gap-4">
+            <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+            <span className="text-white/70 text-sm tracking-widest uppercase animate-pulse">
+              Cargando...
+            </span>
+          </div>
+        )}
+
+        {/* Block interaction */}
+        <div
+          className="absolute inset-0 z-[2]"
+          onContextMenu={(e) => e.preventDefault()}
+        />
+
+        {/* Vignette */}
+        <div
+          className="absolute inset-0 pointer-events-none z-[3]"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.7) 100%)",
+          }}
+        />
+
+        {/* Sound toggle button — top-left corner, small */}
+        {videoReady && (
           <button
-            onClick={toggleIntroMute}
-            className="absolute top-6 left-6 z-20 w-10 h-10 flex items-center justify-center bg-black/40 backdrop-blur-md rounded-full text-white hover:bg-black/60 transition-all border border-white/20"
-            aria-label={introMuted ? "Activar sonido" : "Silenciar"}
+            onClick={toggleMute}
+            className="absolute top-4 left-4 z-[4] flex items-center gap-1.5 active:scale-90 transition-all"
           >
-            {introMuted ? (
-              <VolumeOffIcon className="w-5 h-5" />
-            ) : (
-              <VolumeOnIcon className="w-5 h-5" />
+            <div className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full border ${isMuted ? "bg-white/20 border-white/40 animate-pulse" : "bg-white/10 border-white/20"} backdrop-blur-md`}>
+              {isMuted ? (
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 sm:w-6 sm:h-6">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                  <line x1="23" y1="9" x2="17" y2="15" />
+                  <line x1="17" y1="9" x2="23" y2="15" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 sm:w-6 sm:h-6">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                </svg>
+              )}
+            </div>
+            {isMuted && (
+              <span className="text-white text-[10px] sm:text-xs font-bold tracking-wide drop-shadow-lg">
+                SONIDO
+              </span>
             )}
           </button>
+        )}
 
-          {/* Cinematic vignette */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.7) 100%)",
-            }}
-          />
-
-          {/* Only button: Skip */}
-          <button
-            onClick={goToMain}
-            className="absolute bottom-8 right-6 sm:right-8 z-10 px-5 py-2.5 bg-white/10 backdrop-blur-md text-white rounded-full hover:bg-white/25 transition-all text-xs sm:text-sm font-medium tracking-widest uppercase border border-white/20"
-          >
-            Saltar
-          </button>
-
-          {/* Progress bar */}
-          <div className="absolute bottom-0 left-0 w-full h-1 bg-white/10 z-10">
-            <div
-              className="h-full rounded-r-full"
-              style={{
-                animation: "progress 15s linear forwards",
-                background: "linear-gradient(90deg, #C5A55A, #E5D5A0)",
-              }}
-            />
-          </div>
-        </div>
-      )}
+        {/* Skip */}
+        <button
+          onClick={goToMain}
+          className="absolute bottom-8 right-6 sm:right-8 z-[4] px-5 py-2.5 bg-white/10 backdrop-blur-md text-white rounded-full hover:bg-white/25 transition-all text-xs sm:text-sm font-medium tracking-widest uppercase border border-white/20"
+        >
+          Saltar
+        </button>
+      </div>
 
       {/* ═══════════ FLASH ═══════════ */}
       {phase === "flash" && (
         <div className="fixed inset-0 z-50 bg-white animate-flash" />
       )}
 
-      {/* ═══════════ MAIN – everything in one screen, zero scroll ═══════════ */}
+      {/* ═══════════ MAIN ═══════════ */}
       <div className={phase === "main" ? "animate-fadeIn" : "hidden"}>
         <main
-          className="h-screen overflow-hidden flex flex-col items-center px-3 sm:px-5 pt-2 pb-2 sm:pt-3 sm:pb-3 md:pt-5 md:pb-4 relative"
+          className="overflow-hidden flex flex-col items-center px-3 sm:px-5 py-2 sm:py-4 md:py-6 relative"
           style={{ height: "100dvh" }}
         >
-          {/* ── Background ── */}
+          {/* Background */}
           <div
             className="absolute inset-0 z-0"
             style={{
               background:
-                "linear-gradient(180deg, #FBF7EC 0%, #F0E4C0 18%, #E5D5A0 35%, #C5A55A 50%, #E5D5A0 65%, #F0E4C0 82%, #FBF7EC 100%)",
+                "linear-gradient(180deg, #FFFFFF 0%, #FBF7EC 12%, #F0E4C0 30%, #E5D5A0 48%, #C5A55A 55%, #E5D5A0 62%, #F0E4C0 75%, #FBF7EC 88%, #FFFFFF 100%)",
             }}
           >
             <svg className="absolute top-[8%] left-0 w-full h-[100px] opacity-[0.06]" viewBox="0 0 1440 100" preserveAspectRatio="none">
@@ -169,84 +181,58 @@ export default function Home() {
             <div className="absolute top-[55%] left-1/2 -translate-x-1/2 w-72 h-32 bg-gold/8 rounded-full blur-3xl" />
           </div>
 
-          {/* ── Logo ── */}
-          <div className="relative z-10 shrink-0 mt-3 sm:mt-4 md:mt-5">
+          {/* Logo */}
+          <div className="relative z-10 shrink-0 mt-2 sm:mt-3">
             <Image
               src="/LogoManuelSolis.png"
               alt="Law Offices of Manuel Solis"
-              width={320}
-              height={80}
-              priority
-              className="h-16 sm:h-20 md:h-24 w-auto mix-blend-multiply"
+              width={400}
+              height={100}
+              preload
+              className="h-16 sm:h-20 md:h-28 w-auto mix-blend-multiply"
             />
           </div>
 
-          {/* ── Center: Title + Video ── */}
-          <div className="relative z-10 flex-1 flex flex-col items-center justify-center min-h-0 w-full gap-0.5 sm:gap-1 md:gap-1.5 py-1">
-            {/* Title */}
+          {/* Center: Title + YouTube Video */}
+          <div className="relative z-10 flex-1 flex flex-col items-center justify-center min-h-0 w-full gap-1.5 sm:gap-2 py-1">
             <div className="text-center shrink-0">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-gradient-gold leading-none">
+              <h1 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black tracking-tight text-gradient-gold leading-none">
                 CASO REAL DE ÉXITO
               </h1>
-              <p className="text-lg sm:text-xl md:text-2xl text-navy/60 max-w-md sm:max-w-lg md:max-w-xl mt-0.5 sm:mt-1 leading-snug text-center mx-auto">
+              <p className="text-[10px] sm:text-xs md:text-sm text-navy/70 max-w-[260px] sm:max-w-sm mx-auto mt-1 leading-snug">
                 Conoce este caso real de reunificación familiar, respaldado por
                 los 35 años de experiencia de la Firma del Abogado Manuel Solís.
               </p>
             </div>
 
-            {/* Video – height capped so CTA always stays visible */}
-            <div className="w-full flex items-center justify-center">
-              <div
-                className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-[0_10px_50px_rgba(197,165,90,0.35)] border-2 border-gold/30"
-                style={{
-                  aspectRatio: "16/9",
-                  width: "min(92vw, 820px)",
-                  maxHeight: "calc(100vh - 15rem)",
-                }}
-              >
-                {!videoActive ? (
-                  <button
-                    onClick={() => setVideoActive(true)}
-                    className="relative w-full h-full block cursor-pointer bg-black group"
-                    aria-label="Reproducir video completo"
-                  >
-                    <Image
-                      src="/CoverVideo.png"
-                      alt="Uniendo Familias - Ep. 2 Eva López"
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      sizes="(max-width: 768px) 92vw, 820px"
-                      priority
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent group-hover:from-black/25 group-hover:via-transparent transition-all duration-500" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="play-btn group-hover:scale-110 transition-transform duration-300">
-                        <svg className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 text-white ml-0.5 sm:ml-1" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                      </div>
-                    </div>
-                    <div className="absolute bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2">
-                      <span className="px-4 py-1.5 sm:px-5 sm:py-2 bg-white/15 backdrop-blur-md rounded-full text-white text-[10px] sm:text-xs font-medium tracking-widest uppercase border border-white/20 whitespace-nowrap">
-                        Ver Video Completo
-                      </span>
-                    </div>
-                  </button>
-                ) : (
-                  <iframe
-                    className="absolute inset-0 w-full h-full"
-                    src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&rel=0&modestbranding=1`}
-                    allow="autoplay; encrypted-media; fullscreen"
-                    allowFullScreen
-                    title="Uniendo Familias - Ep. 2 Eva López"
-                  />
-                )}
-              </div>
+            {/* YouTube video */}
+            <div
+              className="aspect-video rounded-lg sm:rounded-2xl overflow-hidden shadow-[0_8px_40px_rgba(197,165,90,0.35)] border-2 border-gold/30 relative"
+              style={{
+                width: "min(88vw, calc(36dvh * 16 / 9), 560px)",
+              }}
+            >
+              <iframe
+                className="absolute inset-0 w-full h-full"
+                src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&mute=1&rel=0&modestbranding=1`}
+                allow="autoplay; encrypted-media; fullscreen"
+                allowFullScreen
+                title="Uniendo Familias - Ep. 2 Eva López"
+              />
             </div>
-            {/* ── CTA ── */}
-            <p className="text-base sm:text-lg md:text-xl font-semibold text-navy/80 text-center leading-snug shrink-0">
-              Responde a este mensaje con un{" "}
-              <span className="text-green-600 font-bold">&ldquo;Me interesa&rdquo;</span>
+          </div>
+
+          {/* CTA — llamada telefónica */}
+          <div className="relative z-10 shrink-0 text-center max-w-[300px] sm:max-w-sm mx-auto pb-1 -mt-4 sm:-mt-6 flex flex-col items-center gap-1.5">
+            <a
+              href={`tel:${PHONE}`}
+              className="inline-flex flex-col items-center px-8 py-3 sm:py-3.5 bg-gradient-to-b from-green-500 to-green-700 text-white font-bold text-base sm:text-lg rounded-full shadow-[0_4px_24px_rgba(34,197,94,0.5)] hover:shadow-[0_4px_32px_rgba(34,197,94,0.7)] active:scale-95 transition-all tracking-wide"
+            >
+              <span>LLAMA AHORA</span>
+              <span className="text-xs sm:text-sm font-semibold tracking-wider opacity-90">(713) 322-7646</span>
+            </a>
+            <p className="text-[10px] sm:text-xs text-navy/60 leading-snug">
+              Te atendemos hoy mismo.
             </p>
           </div>
         </main>
