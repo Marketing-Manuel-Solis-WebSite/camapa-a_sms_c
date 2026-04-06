@@ -222,7 +222,7 @@ export default function Home() {
 
             {/* CTA — responder SMS */}
             <p className="text-sm sm:text-base md:text-lg font-bold text-navy/90 text-center max-w-[320px] sm:max-w-sm leading-snug mt-1">
-              Responde <span className="text-green-600 text-base sm:text-lg md:text-xl font-black">&quot;ME INTERESA&quot;</span> a este mismo SMS y te contactaremos hoy para retomar tu consulta.
+              Responde <span className="text-green-600 text-base sm:text-lg md:text-xl font-black">&quot;ME INTERESA&quot;</span> en el mismo SMS.
             </p>
           </div>
         </main>
