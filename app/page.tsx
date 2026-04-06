@@ -187,7 +187,7 @@ export default function Home() {
               alt="Law Offices of Manuel Solis"
               width={400}
               height={100}
-              preload
+              priority
               className="h-16 sm:h-20 md:h-28 w-auto mix-blend-multiply"
             />
           </div>
@@ -195,10 +195,10 @@ export default function Home() {
           {/* Center: Title + YouTube Video */}
           <div className="relative z-10 flex-1 flex flex-col items-center justify-center min-h-0 w-full gap-1.5 sm:gap-2 py-1">
             <div className="text-center shrink-0">
-              <h1 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black tracking-tight text-gradient-gold leading-none">
+              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-gradient-gold leading-none">
                 CASO REAL DE ÉXITO
               </h1>
-              <p className="text-[10px] sm:text-xs md:text-sm text-navy/70 max-w-[260px] sm:max-w-sm mx-auto mt-1 leading-snug">
+              <p className="text-xs sm:text-sm md:text-base text-navy/70 max-w-[280px] sm:max-w-md mx-auto mt-1 leading-snug">
                 Conoce este caso real de reunificación familiar, respaldado por
                 los 35 años de experiencia de la Firma del Abogado Manuel Solís.
               </p>
@@ -219,13 +219,11 @@ export default function Home() {
                 title="Uniendo Familias - Ep. 2 Eva López"
               />
             </div>
-          </div>
 
-          {/* CTA — responder SMS */}
-          <div className="relative z-10 shrink-0 text-center max-w-[320px] sm:max-w-sm mx-auto pb-1 -mt-4 sm:-mt-6 flex flex-col items-center gap-1.5">
-            <div className="inline-flex flex-col items-center px-6 py-3 sm:py-3.5 bg-gradient-to-b from-green-500 to-green-700 text-white font-bold text-sm sm:text-base rounded-2xl shadow-[0_4px_24px_rgba(34,197,94,0.5)] tracking-wide leading-snug text-center">
-              Responde &quot;ME INTERESA&quot; a este mismo SMS y te contactaremos hoy para retomar tu consulta.
-            </div>
+            {/* CTA — responder SMS */}
+            <p className="text-sm sm:text-base md:text-lg font-bold text-navy/90 text-center max-w-[320px] sm:max-w-sm leading-snug mt-1">
+              Responde <span className="text-green-600 text-base sm:text-lg md:text-xl font-black">&quot;ME INTERESA&quot;</span> a este mismo SMS y te contactaremos hoy para retomar tu consulta.
+            </p>
           </div>
         </main>
       </div>
