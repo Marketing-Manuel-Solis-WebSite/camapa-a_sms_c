@@ -26,14 +26,8 @@ body {
 
 /* ── Keyframes ── */
 
-@keyframes flash {
-  0% { opacity: 0; }
-  20% { opacity: 1; }
-  100% { opacity: 1; }
-}
-
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(30px); }
+  from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -70,12 +64,8 @@ body {
 
 /* ── Utility Classes ── */
 
-.animate-flash {
-  animation: flash 0.8s ease-in-out forwards;
-}
-
 .animate-fadeIn {
-  animation: fadeIn 1.2s ease-out forwards;
+  animation: fadeIn 0.8s ease-out forwards;
 }
 
 .animate-pulseGlow {
