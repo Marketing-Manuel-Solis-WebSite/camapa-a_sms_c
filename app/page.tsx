@@ -174,7 +174,6 @@ export default function Home() {
             {/* Arrow pointing to SMS */}
             <div className="mt-3 flex items-center justify-center gap-2 text-gold-light/60 text-[10px] sm:text-xs">
               <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
-              <span>Es gratis y sin compromiso</span>
               <svg className="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
             </div>
           </div>
